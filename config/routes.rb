@@ -1,8 +1,13 @@
 Rails.application.routes.draw do
   resources :serps
 
+  get "/domains/:id" => "serps#index",
+    constraints: { id: /[A-Za-z0-9\.]+?/, format: :html }
+
   get "/domains/:domain_id/keywords/:id" => "serps#index",
-    constraints: { domain_id: /[A-Za-z0-9\.]+?/ }
+    constraints: { domain_id: /[A-Za-z0-9\.]+?/,
+    format: :html
+  }
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
