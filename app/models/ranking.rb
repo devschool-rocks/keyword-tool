@@ -74,11 +74,11 @@ class Ranking < ActiveRecord::Base
     end
 
     search.map do |serp|
+      next unless domain_from_url(serp.uri) == domain
       d = Domain.find_or_create_by(value: domain_from_url(serp.uri))
-      next unless d.value == domain
       Keyword.find_or_create_by(value: keyword).rankings.
               create(domain: d, url: serp.uri, position: serp.index+1)
-    end
+    end.compact
   end
 
 
