@@ -67,16 +67,17 @@ class Ranking < ActiveRecord::Base
 
   end
 
-  def self.fetch(keyword)
+  def self.fetch(keyword, domain)
     search  = Google::Search::Web.new do |search|
       search.query = keyword
       search.size = :large
     end
 
     search.map do |serp|
-      domain = Domain.find_or_create_by(value: domain_from_url(serp.uri))
+      d = Domain.find_or_create_by(value: domain_from_url(serp.uri))
+      next unless d.value == domain
       Keyword.find_or_create_by(value: keyword).rankings.
-              create(domain: domain, url: serp.uri, position: serp.index+1)
+              create(domain: d, url: serp.uri, position: serp.index+1)
     end
   end
 
