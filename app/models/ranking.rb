@@ -3,13 +3,25 @@ class Ranking < ActiveRecord::Base
   belongs_to :domain
   belongs_to :keyword
 
+  scope :by_domain, -> (val) {
+    with_domains.where("domains.value = ?", val)
+  }
+
+  scope :by_keyword, -> (val) {
+    with_keywords.where("keywords.value = ?", val)
+  }
+
   scope :with_best, -> {
     select("rankings.*, MAX(position) as best").
       group("rankings.id")
   }
 
   scope :with_domains, -> {
-    joins("LEFT JOIN domains ON domains.id = rankings.domain_id")
+    joins(:domain)
+  }
+
+  scope :with_keywords, -> {
+    joins(:keyword)
   }
 
   scope :track_domains, ->(*domains) {
@@ -67,6 +79,7 @@ class Ranking < ActiveRecord::Base
               create(domain: domain, url: serp.uri, position: serp.index+1)
     end
   end
+
 
 private
 

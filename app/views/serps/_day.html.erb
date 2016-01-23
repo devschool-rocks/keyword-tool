@@ -1,0 +1,5 @@
+<div class="day">
+  <div><%= day.created_at.to_date.to_s(:short) %></div>
+  <%= day.position %>
+  <span class="change"><%= day.position - yesterdao.position %></span>
+</div>

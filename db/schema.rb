@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160112050536) do
+ActiveRecord::Schema.define(version: 20160123074252) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,6 +40,9 @@ ActiveRecord::Schema.define(version: 20160112050536) do
 
   add_index "rankings", ["domain_id"], name: "index_rankings_on_domain_id", using: :btree
   add_index "rankings", ["keyword_id"], name: "index_rankings_on_keyword_id", using: :btree
+
+  create_table "serps_views", force: :cascade do |t|
+  end
 
   add_foreign_key "rankings", "domains"
   add_foreign_key "rankings", "keywords"
