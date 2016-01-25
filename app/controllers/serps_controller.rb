@@ -11,7 +11,7 @@ class SerpsController < ApplicationController
              elsif domain_and_keyword?
                domain_and_keyword
              else
-               Serps.all
+               Serp.all
              end
   end
 
