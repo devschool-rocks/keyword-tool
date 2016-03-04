@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyString
+  h1: MyString
+  html_text_ratio: MyString
+  ranking_id: 
+
+two:
+  title: MyString
+  description: MyString
+  h1: MyString
+  html_text_ratio: MyString
+  ranking_id: 
