@@ -1,9 +1,0 @@
-<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
-
-<%= line_chart ranking_ceiling(Ranking.
-  joins(:keyword, :domain).
-  where("domains.value = 'devschool.rocks'").
-  group("keywords.value").
-  group_by_day("rankings.created_at").
-  maximum(:position)) %>
-
