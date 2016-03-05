@@ -1,5 +1,6 @@
 <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
 
-<%= line_chart ranking_ceiling(@rankings), min: 1, max: 80, library: { curveType: 'none', explorer: { axis: 'horizontal' } } %>
+<%= line_chart ranking_ceiling(@rankings), min: 1, max: 80, 
+  library: { height: 600, curveType: 'none', explorer: { axis: 'horizontal' } } %>
 
 
