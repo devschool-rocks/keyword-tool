@@ -4,6 +4,15 @@ class Ranking < ActiveRecord::Base
   belongs_to :keyword
   has_many :page_factors
 
+  scope :by_domain, ->(val) {
+    with_domains.
+      where("domains.value = ?", val)
+  }
+
+  scope :by_keyword, ->(val) {
+    with_keywords.
+      where("keywords.value = ?", val)
+  }
   scope :with_domains, -> {
     joins(:domain)
   }
