@@ -1,10 +1,8 @@
 class RankingsController < ApplicationController
   def index
     @rankings = filter(
-      Ranking.joins(:keyword, :domain)
-    ).group("keywords.value").
-      group_by_day("rankings.created_at").
-      maximum(:position)
+      Ranking.impute_missing
+    ).daily
   end
 
 private

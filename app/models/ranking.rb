@@ -4,19 +4,6 @@ class Ranking < ActiveRecord::Base
   belongs_to :keyword
   has_many :page_factors
 
-  scope :by_domain, -> (val) {
-    with_domains.where("domains.value = ?", val)
-  }
-
-  scope :by_keyword, -> (val) {
-    with_keywords.where("keywords.value = ?", val)
-  }
-
-  scope :with_best, -> {
-    select("rankings.*, MAX(position) as best").
-      group("rankings.id")
-  }
-
   scope :with_domains, -> {
     joins(:domain)
   }
@@ -25,48 +12,20 @@ class Ranking < ActiveRecord::Base
     joins(:keyword)
   }
 
-  scope :track_domains, ->(*domains) {
-    with_domains.
-      where("domains.value IN (?)", domains)
+  scope :with_data, -> {
+    with_domains.with_keywords
   }
 
-  def self.rankings_pivot(*domains)
-    us   = 'devschool.rocks'
-    them = domains-[us]
-    data = Ranking.with_best.track_domains(*domains)
-    keywords = data.map{|r| r.keyword.value}.uniq
+  scope :daily, -> {
+    with_data.
+      group("keywords.value").
+      group_by_day("rankings.created_at").
+      minimum(:position)
+  }
 
-    keywords.map do |kw|
-      our = data.select {|r| r.domain.value  == us &&
-                             r.keyword.value == kw}[0]
-      theirs = data.select do |row|
-        them.include?(row.domain.value) && row.keyword.value == kw
-      end
-
-      byebug
-      theirs.reduce({}) {|acc, row| acc[row.domain.value] = [row.position] }
-
-      RankingRow.new(
-        keyword: kw,
-        position: our.position,
-        competition: theirs,
-        page: our.url,
-        best: our.best
-      )
-    end
-  end
-
-  class RankingRow < Struct.new(:keyword, :position, :competitors,
-                                :competition, :page, :best)
-
-    attr_reader :keyword, :position,
-                :competition, :page, :best
-
-    def initialize(attrs)
-      attrs.each {|k,v| instance_variable_set("@#{k}", v) }
-    end
-
-  end
+  scope :impute_missing, -> {
+    self
+  }
 
   def self.fetch(keyword, domain)
     search  = Google::Search::Web.new do |search|
