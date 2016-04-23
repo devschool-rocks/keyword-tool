@@ -1,6 +1,15 @@
-<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+<div>
+  <center>
+    <ul>
+      <% caluclate_changes(@rankings).each do |h| %>
+        <li style="display: inline"><%= h[0] %>: <%= h[1] %></li>
+      <% end %>
+    </ul>
+  </center>
+</div>
 
-<%= line_chart ranking_ceiling(@rankings), min: 1, max: 80, 
-  library: { height: 600, curveType: 'none', explorer: { axis: 'horizontal' } } %>
-
-
+<div>
+  <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+  <%= line_chart ranking_ceiling(@rankings), min: 1, max: 80, 
+    library: { height: 600, curveType: 'none', explorer: { axis: 'horizontal' } } %>
+</div>
