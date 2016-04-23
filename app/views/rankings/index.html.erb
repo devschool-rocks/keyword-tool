@@ -1,8 +1,10 @@
 <div>
   <center>
-    <ul>
+    <ul class="changes">
       <% caluclate_changes(@rankings).each do |h| %>
-        <li style="display: inline"><%= h[0] %>: <%= h[1] %></li>
+        <% pos_neg_class = h[1].positive? ? "positive" : "negative" %>
+        <% pos_neg = h[1].zero? ? "" : h[1].positive? ? "+" : "-" %>
+        <li><%= h[0] %>: <span class="<%= pos_neg_class %>"><%= "#{pos_neg}#{h[1]}" %></span></li>
       <% end %>
     </ul>
   </center>
