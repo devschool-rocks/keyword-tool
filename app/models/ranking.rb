@@ -1,3 +1,4 @@
+require 'open-uri'
 class Ranking < ActiveRecord::Base
 
   belongs_to :domain
@@ -32,20 +33,14 @@ class Ranking < ActiveRecord::Base
       minimum(:position)
   }
 
-  scope :impute_missing, -> {
-    self
-  }
-
   def self.fetch(keyword, domain)
-    search  = Google::Search::Web.new do |search|
-      search.query = keyword
-      search.size = :large
-    end
+    url = "https://www.googleapis.com/customsearch/v1?key=AIzaSyDcYekluq-PNiRYZ4zD2pm4OVNfrvtsYsE&cx=001772248512260181370:_y8o10nvm7m&q=#{URI.escape(keyword)}"
+    search = JSON.parse(open(url).read)["items"]
 
-    search.map do |serp|
-      next unless domain_from_url(serp.uri) == domain
-      d = Domain.find_or_create_by(value: domain_from_url(serp.uri))
-      record_ranking_and_page_factors(d, keyword, serp)
+    search.map.with_index do |serp, i|
+      next unless domain_from_url(serp['link']) == domain
+      d = Domain.find_or_create_by(value: domain_from_url(serp['link']))
+      record_ranking_and_page_factors(d, keyword, serp, i)
     end.compact
   end
 
@@ -56,10 +51,10 @@ private
     uri.gsub(/(https?\:)?\/\//,'').split("/")[0]
   end
 
-  def self.record_ranking_and_page_factors(domain, keyword, serp)
+  def self.record_ranking_and_page_factors(domain, keyword, serp, i)
     ranking = Keyword.find_or_create_by(value: keyword).
-      rankings.create(domain: domain, url: serp.uri, position: serp.index+1)
-    ranking.page_factors.create(PageFactor.extract_factors(serp.uri))
+      rankings.create(domain: domain, url: serp['link'], position: i+1)
+    ranking.page_factors.create(PageFactor.extract_factors(serp['link']))
     ranking
   end
 
